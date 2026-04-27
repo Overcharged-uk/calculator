@@ -550,7 +550,7 @@
     document.getElementById('result').classList.remove('visible');
 
     try {
-      const response = await fetch(https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi, {
+      const response = await fetch('https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
@@ -646,7 +646,7 @@
     // If email is filled, log it to Make before redirecting
     if (email && email.includes('@')) {
       try {
-        await fetch(https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi, {
+        await fetch('https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {
           method: 'POST',
           mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
