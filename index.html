@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<div class="widget-container"> 
+<title>Service Charge Calculator — Overcharged.uk</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -41,7 +41,7 @@
     letter-spacing: 0.2px;
   }
 
-  select, input {
+  select, input[type="number"], input[type="email"] {
     width: 100%;
     padding: 12px 14px;
     background: #163d38;
@@ -50,6 +50,7 @@
     color: #ffffff;
     font-size: 15px;
     appearance: none;
+    -webkit-appearance: none;
     outline: none;
     transition: border-color 0.2s;
   }
@@ -60,6 +61,27 @@
 
   input::placeholder {
     color: #4a7a70;
+  }
+
+  /* Style the select arrow */
+  .select-wrapper {
+    position: relative;
+  }
+
+  .select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3ecf96;
+    pointer-events: none;
+    font-size: 14px;
+  }
+
+  select option {
+    background: #163d38;
+    color: #ffffff;
   }
 
   .amenities-label {
@@ -115,11 +137,18 @@
     background: #3ecf96;
     border-color: #3ecf96;
     color: #0d2b28;
+    font-weight: 700;
   }
 
   .amenity-name {
     font-size: 14px;
     color: #ffffff;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1e4a42;
+    margin: 1.5rem 0;
   }
 
   .submit-btn {
@@ -140,32 +169,39 @@
   .submit-btn:hover { background: #34b882; }
   .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+  /* Result panel */
   .result {
     display: none;
     margin-top: 2rem;
-    padding: 1.5rem;
-    background: #163d38;
     border-radius: 12px;
-    border: 1px solid #2a5a52;
-    text-align: center;
+    overflow: hidden;
   }
 
   .result.visible { display: block; }
 
+  .result-header {
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+  }
+
+  .result-header.over { background: #3d1a10; border: 1px solid #8b3a1a; border-radius: 12px 12px 0 0; }
+  .result-header.fair { background: #163d38; border: 1px solid #2a5a52; border-radius: 12px 12px 0 0; }
+  .result-header.under { background: #163d38; border: 1px solid #2a5a52; border-radius: 12px 12px 0 0; }
+
   .result-label {
-    font-size: 13px;
+    font-size: 12px;
     color: #7aada0;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .result-number {
-    font-size: 52px;
-    font-weight: 600;
+    font-size: 48px;
+    font-weight: 700;
     letter-spacing: -2px;
     line-height: 1;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .result-number.over { color: #e05c3a; }
@@ -173,10 +209,19 @@
   .result-number.under { color: #3ecf96; }
 
   .result-desc {
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 14px;
+    line-height: 1.7;
     color: #9abfb8;
-    margin-bottom: 1.5rem;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .result-body {
+    background: #163d38;
+    border: 1px solid #2a5a52;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 1.5rem;
   }
 
   .result-breakdown {
@@ -184,17 +229,63 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 1.5rem;
-    text-align: left;
   }
 
   .breakdown-item {
     background: #0d2b28;
     border-radius: 8px;
-    padding: 12px;
+    padding: 12px 14px;
   }
 
-  .breakdown-item .bl { font-size: 11px; color: #5a8a80; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .breakdown-item .bv { font-size: 16px; font-weight: 500; color: #ffffff; }
+  .breakdown-item .bl {
+    font-size: 11px;
+    color: #5a8a80;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-item .bv {
+    font-size: 17px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .breakdown-item .bv.highlight {
+    color: #e05c3a;
+  }
+
+  /* Email capture */
+  .email-capture {
+    margin-bottom: 1rem;
+  }
+
+  .email-capture label {
+    font-size: 13px;
+    color: #9abfb8;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .email-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .email-row input {
+    flex: 1;
+    padding: 12px 14px;
+    background: #0d2b28;
+    border: 1px solid #2a5a52;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .email-row input:focus {
+    border-color: #3ecf96;
+  }
 
   .cta-btn {
     display: block;
@@ -210,6 +301,7 @@
     text-align: center;
     text-decoration: none;
     transition: background 0.2s;
+    margin-top: 0.75rem;
   }
 
   .cta-btn:hover { background: #c94e2f; }
@@ -219,9 +311,11 @@
     color: #5a8a80;
     margin-top: 8px;
     text-align: center;
+    line-height: 1.5;
   }
 
-  .error {
+  /* Error and loading */
+  .error-msg {
     display: none;
     background: #3d1a1a;
     border: 1px solid #8b3a3a;
@@ -230,114 +324,186 @@
     font-size: 14px;
     color: #e05c3a;
     margin-top: 1rem;
+    line-height: 1.5;
   }
 
-  .error.visible { display: block; }
+  .error-msg.visible { display: block; }
 
   .loading {
     display: none;
     text-align: center;
-    padding: 1rem 0;
+    padding: 1.25rem 0;
     color: #7aada0;
     font-size: 14px;
   }
 
-  .loading.visible { display: block; }
+  .loading.visible { display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #2a5a52;
+    border-top-color: #3ecf96;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Reset link */
+  .reset-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 13px;
+    color: #5a8a80;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .reset-link:hover { color: #7aada0; }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    body { padding: 1.25rem; }
+    .amenities-grid { grid-template-columns: 1fr; }
+    .result-breakdown { grid-template-columns: 1fr; }
+    .result-number { font-size: 36px; }
+  }
 </style>
 </head>
 <body>
 
-<p class="subtitle">Tell us about your flat. We'll compare your service charge against our database of similar buildings and tell you where you stand.</p>
+<p class="subtitle">Tell us about your flat and we'll compare your service charge against our database of similar buildings across the UK.</p>
 
-<div class="field">
-  <label>Where is your property?</label>
-  <select id="location">
-    <option value="">Select location</option>
-    <option value="London">Inside London</option>
-    <option value="Outside London">Outside London</option>
-  </select>
-</div>
+<!-- FORM -->
+<div id="formSection">
 
-<div class="field">
-  <label>Size of your flat (square feet)</label>
-  <input type="number" id="sqft" placeholder="e.g. 650" min="100" max="5000"/>
-</div>
-
-<div class="field">
-  <label>Number of bedrooms</label>
-  <select id="bedrooms">
-    <option value="">Select bedrooms</option>
-    <option value="1">1 bedroom</option>
-    <option value="2">2 bedrooms</option>
-    <option value="3">3 bedrooms</option>
-  </select>
-</div>
-
-<div class="field">
-  <label>Annual service charge (£)</label>
-  <input type="number" id="charge" placeholder="e.g. 3500" min="0"/>
-</div>
-
-<span class="amenities-label">Does your building have any of the following?</span>
-<div class="amenities-grid">
-  <label class="amenity-toggle" id="toggle-carpark">
-    <input type="checkbox" id="carpark"/>
-    <span class="toggle-icon">✓</span>
-    <span class="amenity-name"> Car park</span>
-  </label>
-  <label class="amenity-toggle" id="toggle-concierge">
-    <input type="checkbox" id="concierge"/>
-    <span class="toggle-icon">✓</span>
-    <span class="amenity-name"> Concierge</span>
-  </label>
-  <label class="amenity-toggle" id="toggle-gym">
-    <input type="checkbox" id="gym"/>
-    <span class="toggle-icon">✓</span>
-    <span class="amenity-name"> Gym</span>
-  </label>
-  <label class="amenity-toggle" id="toggle-cinema">
-    <input type="checkbox" id="cinema"/>
-    <span class="toggle-icon">✓</span>
-    <span class="amenity-name"> Cinema room</span>
-  </label>
-</div>
-
-<button class="submit-btn" id="submitBtn" onclick="calculate()">Calculate my service charge</button>
-
-<div class="loading" id="loading">Checking your service charge against our database…</div>
-<div class="error" id="error">Something went wrong. Please check your inputs and try again.</div>
-
-<div class="result" id="result">
-  <div class="result-label">You are paying approximately</div>
-  <div class="result-number" id="resultNumber"></div>
-  <div class="result-desc" id="resultDesc"></div>
-
-  <div class="result-breakdown">
-    <div class="breakdown-item">
-      <div class="bl">Your cost per sq ft</div>
-      <div class="bv" id="userCost"></div>
-    </div>
-    <div class="breakdown-item">
-      <div class="bl">Benchmark for your building</div>
-      <div class="bv" id="benchmarkCost"></div>
-    </div>
-    <div class="breakdown-item">
-      <div class="bl">Benchmark range</div>
-      <div class="bv" id="benchmarkRange"></div>
-    </div>
-    <div class="breakdown-item">
-      <div class="bl">Your annual charge</div>
-      <div class="bv" id="annualCharge"></div>
+  <div class="field">
+    <label for="location">Where is your property?</label>
+    <div class="select-wrapper">
+      <select id="location">
+        <option value="">Select location</option>
+        <option value="London">Inside London</option>
+        <option value="Outside London">Outside London</option>
+      </select>
     </div>
   </div>
 
-  <a class="cta-btn" href="https://overcharged.uk/audit">Get a free full audit →</a>
-  <p class="cta-sub">No obligation. We'll tell you exactly what we found and what you can do about it.</p>
+  <div class="field">
+    <label for="sqft">Size of your flat (square feet)</label>
+    <input type="number" id="sqft" placeholder="e.g. 650" min="100" max="5000"/>
+  </div>
+
+  <div class="field">
+    <label for="bedrooms">Number of bedrooms</label>
+    <div class="select-wrapper">
+      <select id="bedrooms">
+        <option value="">Select bedrooms</option>
+        <option value="1">1 bedroom</option>
+        <option value="2">2 bedrooms</option>
+        <option value="3">3 bedrooms</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="charge">Your annual service charge (£)</label>
+    <input type="number" id="charge" placeholder="e.g. 3500" min="0"/>
+  </div>
+
+  <hr class="divider"/>
+
+  <span class="amenities-label">Does your building have any of the following?</span>
+  <div class="amenities-grid">
+    <label class="amenity-toggle" id="toggle-carpark">
+      <input type="checkbox" id="carpark"/>
+      <span class="toggle-icon">✓</span>
+      <span class="amenity-name"> Car park</span>
+    </label>
+    <label class="amenity-toggle" id="toggle-concierge">
+      <input type="checkbox" id="concierge"/>
+      <span class="toggle-icon">✓</span>
+      <span class="amenity-name"> Concierge</span>
+    </label>
+    <label class="amenity-toggle" id="toggle-gym">
+      <input type="checkbox" id="gym"/>
+      <span class="toggle-icon">✓</span>
+      <span class="amenity-name"> Gym</span>
+    </label>
+    <label class="amenity-toggle" id="toggle-cinema">
+      <input type="checkbox" id="cinema"/>
+      <span class="toggle-icon">✓</span>
+      <span class="amenity-name"> Cinema room</span>
+    </label>
+  </div>
+
+  <button class="submit-btn" id="submitBtn" onclick="calculate()">Calculate my service charge</button>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    Checking against our database…
+  </div>
+
+  <div class="error-msg" id="error"></div>
+
+</div>
+
+<!-- RESULT PANEL -->
+<div class="result" id="result">
+
+  <div class="result-header" id="resultHeader">
+    <div class="result-label">You are paying approximately</div>
+    <div class="result-number" id="resultNumber"></div>
+    <div class="result-desc" id="resultDesc"></div>
+  </div>
+
+  <div class="result-body">
+    <div class="result-breakdown">
+      <div class="breakdown-item">
+        <div class="bl">Your cost per sq ft</div>
+        <div class="bv highlight" id="userCost"></div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bl">Benchmark for your building</div>
+        <div class="bv" id="benchmark"></div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bl">Typical range</div>
+        <div class="bv" id="benchmarkRange"></div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bl">Your annual charge</div>
+        <div class="bv" id="annualCharge"></div>
+      </div>
+    </div>
+
+    <div class="email-capture">
+      <label for="email">Get your full results by email</label>
+      <div class="email-row">
+        <input type="email" id="email" placeholder="your@email.com"/>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="submitEmail()">Get a free full audit →</button>
+    <p class="cta-sub">No obligation. We'll tell you exactly what we found<br>and what you can do about it.</p>
+
+    <span class="reset-link" onclick="resetForm()">← Start again</span>
+  </div>
+
 </div>
 
 <script>
+
+  // ─── REPLACE THIS WITH YOUR MAKE WEBHOOK URL ───
+  const WEBHOOK_URL = 'https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi';
+  // ──────────────────────────────────────────────
+
+  // Store result data for email submission
+  let resultData = {};
+
   // Amenity toggle behaviour
-  ['carpark','concierge','gym','cinema'].forEach(id => {
+  ['carpark', 'concierge', 'gym', 'cinema'].forEach(id => {
     const toggle = document.getElementById('toggle-' + id);
     const checkbox = document.getElementById(id);
     toggle.addEventListener('click', function(e) {
@@ -348,26 +514,23 @@
   });
 
   async function calculate() {
-    // Validate inputs
+
+    // Clear previous errors
+    hideError();
+
+    // Get values
     const location = document.getElementById('location').value;
     const sqft = parseFloat(document.getElementById('sqft').value);
     const bedrooms = document.getElementById('bedrooms').value;
     const charge = parseFloat(document.getElementById('charge').value);
 
-    if (!location || !sqft || !bedrooms || !charge) {
-      showError('Please fill in all fields before calculating.');
-      return;
-    }
-
-    if (sqft < 100 || sqft > 5000) {
-      showError('Please enter a realistic flat size between 100 and 5,000 sq ft.');
-      return;
-    }
-
-    if (charge < 100 || charge > 20000) {
-      showError('Please enter a realistic annual service charge amount.');
-      return;
-    }
+    // Validate
+    if (!location) { showError('Please select your location.'); return; }
+    if (!bedrooms) { showError('Please select the number of bedrooms.'); return; }
+    if (!sqft || isNaN(sqft)) { showError('Please enter the size of your flat in square feet.'); return; }
+    if (sqft < 100 || sqft > 5000) { showError('Please enter a realistic flat size between 100 and 5,000 sq ft.'); return; }
+    if (!charge || isNaN(charge)) { showError('Please enter your annual service charge amount.'); return; }
+    if (charge < 100 || charge > 500000) { showError('Please enter a realistic annual service charge amount.'); return; }
 
     // Build payload
     const payload = {
@@ -381,67 +544,140 @@
       cinema: document.getElementById('cinema').checked ? 'Yes' : 'No'
     };
 
-    // Show loading
+    // Show loading state
     document.getElementById('loading').classList.add('visible');
-    document.getElementById('error').classList.remove('visible');
-    document.getElementById('result').classList.remove('visible');
     document.getElementById('submitBtn').disabled = true;
+    document.getElementById('result').classList.remove('visible');
 
     try {
-      const response = await fetch('https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {
+      const response = await fetch(https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi, {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
+      if (!response.ok) {
+        throw new Error('Server returned ' + response.status);
+      }
+
       const data = await response.json();
 
       if (data.status === 'success') {
-        showResult(data, charge, sqft);
+        // Calculate everything in the browser
+        const userCostPerSqft = charge / sqft;
+        const bench = parseFloat(data.benchmark);
+
+        if (isNaN(bench) || bench === 0) {
+          showError('We could not find a benchmark for this building type. Please contact us directly for a manual assessment.');
+          return;
+        }
+
+        const overpaymentPct = ((userCostPerSqft - bench) / bench) * 100;
+
+        // Store for email submission
+        resultData = {
+          location, sqft, bedrooms, charge,
+          car_park: payload.car_park,
+          concierge: payload.concierge,
+          gym: payload.gym,
+          cinema: payload.cinema,
+          user_cost_per_sqft: userCostPerSqft.toFixed(2),
+          benchmark: bench,
+          overpayment_percent: overpaymentPct.toFixed(1)
+        };
+
+        showResult(userCostPerSqft, bench, overpaymentPct, charge);
+
       } else {
-        showError('We could not find a benchmark for your building type. Please contact us directly for a manual assessment.');
+        showError('We could not find a benchmark for this building type. Please contact us directly for a manual assessment.');
       }
 
     } catch (err) {
-      showError('Something went wrong connecting to our database. Please try again in a moment.');
+      console.error('Calculator error:', err);
+      showError('Something went wrong connecting to our database. Please try again in a moment, or contact us directly at projects@overcharged.uk');
     } finally {
       document.getElementById('loading').classList.remove('visible');
       document.getElementById('submitBtn').disabled = false;
     }
   }
 
-  function showResult(data, charge, sqft) {
-    const userCost = charge / sqft;
-    const bench = parseFloat(data.benchmark);
-    const pct = ((userCost - bench) / bench) * 100;
-
-    const pct = parseFloat(data.overpayment_percent);
-    const userCost = parseFloat(data.user_cost_per_sqft);
-    const bench = parseFloat(data.benchmark);
+  function showResult(userCost, bench, pct, charge) {
 
     const numberEl = document.getElementById('resultNumber');
     const descEl = document.getElementById('resultDesc');
+    const headerEl = document.getElementById('resultHeader');
 
-    if (pct > 5) {
+    const roundedPct = Math.round(Math.abs(pct));
+
+    if (pct > 10) {
       numberEl.textContent = '+' + Math.round(pct) + '% above benchmark';
       numberEl.className = 'result-number over';
-      descEl.textContent = 'Your service charge appears to be above what we would expect for a building like yours. This suggests there may be costs worth challenging. A full audit will tell you exactly where the excess lies.';
+      headerEl.className = 'result-header over';
+      descEl.textContent = 'Your service charge is significantly above what we would expect for a building like yours. This strongly suggests there are costs worth challenging. A full audit will identify exactly where the excess lies.';
+    } else if (pct > 5) {
+      numberEl.textContent = '+' + Math.round(pct) + '% above benchmark';
+      numberEl.className = 'result-number over';
+      headerEl.className = 'result-header over';
+      descEl.textContent = 'Your service charge appears to be above the typical range for a building like yours. This warrants a closer look. A full audit will tell you exactly what is driving the difference.';
     } else if (pct < -5) {
       numberEl.textContent = Math.round(pct) + '% below benchmark';
-      numberEl.className = 'result-number under';
-      descEl.textContent = 'Your service charge appears to be within or below the expected range for a building like yours. That said, a charge being low does not mean it is free of unjustified costs - a full audit will give you complete certainty.';
+      numberEl.className = 'result-number fair';
+      headerEl.className = 'result-header fair';
+      descEl.textContent = 'Your service charge appears to be within or below the expected range for a building like yours. That said, a low overall charge does not mean every line item is justified — a full audit gives you complete certainty.';
     } else {
       numberEl.textContent = 'Within benchmark range';
       numberEl.className = 'result-number fair';
-      descEl.textContent = 'Your service charge appears to be broadly in line with what we would expect for a building like yours. A full audit will confirm whether all charges are properly evidenced and recoverable.';
+      headerEl.className = 'result-header fair';
+      descEl.textContent = 'Your service charge appears broadly in line with what we would expect for a building like yours. A full audit will confirm whether all charges are properly evidenced and recoverable under your lease.';
     }
 
-    document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + '/sq ft';
-    document.getElementById('benchmarkCost').textContent = '£' + bench.toFixed(2) + '/sq ft';
+    document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + ' / sq ft';
+    document.getElementById('benchmark').textContent = '£' + bench.toFixed(2);
     document.getElementById('annualCharge').textContent = '£' + charge.toLocaleString();
 
     document.getElementById('result').classList.add('visible');
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  async function submitEmail() {
+    const email = document.getElementById('email').value;
+
+    // If email is filled, log it to Make before redirecting
+    if (email && email.includes('@')) {
+      try {
+        await fetch(https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'lead_capture',
+            email: email,
+            ...resultData
+          })
+        });
+      } catch (err) {
+        // Fail silently — still redirect even if logging fails
+        console.error('Lead capture error:', err);
+      }
+    }
+
+    // Redirect to home page
+    window.location.href = 'https://overcharged.uk';
+  }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('visible');
+    document.getElementById('location').value = '';
+    document.getElementById('sqft').value = '';
+    document.getElementById('bedrooms').value = '';
+    document.getElementById('charge').value = '';
+    document.getElementById('email').value = '';
+    ['carpark', 'concierge', 'gym', 'cinema'].forEach(id => {
+      document.getElementById(id).checked = false;
+      document.getElementById('toggle-' + id).classList.remove('active');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function showError(msg) {
@@ -449,9 +685,12 @@
     el.textContent = msg;
     el.classList.add('visible');
   }
-</script>
 
-</div>
+  function hideError() {
+    document.getElementById('error').classList.remove('visible');
+  }
+
+</script>
 
 </body>
 </html>
