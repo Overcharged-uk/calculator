@@ -413,9 +413,7 @@
   function showResult(data, charge, sqft) {
     const pct = parseFloat(data.overpayment_percent);
     const userCost = parseFloat(data.user_cost_per_sqft);
-    const benchMid = parseFloat(data.benchmark_mid);
-    const benchLow = parseFloat(data.benchmark_low);
-    const benchHigh = parseFloat(data.benchmark_high);
+    const bench = parseFloat(data.benchmark);
 
     const numberEl = document.getElementById('resultNumber');
     const descEl = document.getElementById('resultDesc');
@@ -435,8 +433,7 @@
     }
 
     document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + '/sq ft';
-    document.getElementById('benchmarkCost').textContent = '£' + benchMid.toFixed(2) + '/sq ft';
-    document.getElementById('benchmarkRange').textContent = '£' + benchLow.toFixed(2) + ' – £' + benchHigh.toFixed(2);
+    document.getElementById('benchmarkCost').textContent = '£' + bench.toFixed(2) + '/sq ft';
     document.getElementById('annualCharge').textContent = '£' + charge.toLocaleString();
 
     document.getElementById('result').classList.add('visible');
