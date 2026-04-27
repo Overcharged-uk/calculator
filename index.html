@@ -411,6 +411,10 @@
   }
 
   function showResult(data, charge, sqft) {
+    const userCost = charge / sqft;
+    const bench = parseFloat(data.benchmark);
+    const pct = ((userCost - bench) / bench) * 100;
+
     const pct = parseFloat(data.overpayment_percent);
     const userCost = parseFloat(data.user_cost_per_sqft);
     const bench = parseFloat(data.benchmark);
