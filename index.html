@@ -1,473 +1,456 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.5">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-    span.Apple-tab-span {white-space:pre}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="widget-container"> 
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    background: #0d2b28;
+    color: #ffffff;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.3px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #7aada0;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: #9abfb8;
+    margin-bottom: 6px;
+    letter-spacing: 0.2px;
+  }
+
+  select, input {
+    width: 100%;
+    padding: 12px 14px;
+    background: #163d38;
+    border: 1px solid #2a5a52;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    appearance: none;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  select:focus, input:focus {
+    border-color: #3ecf96;
+  }
+
+  input::placeholder {
+    color: #4a7a70;
+  }
+
+  .amenities-label {
+    font-size: 13px;
+    color: #9abfb8;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .amenity-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #163d38;
+    border: 1px solid #2a5a52;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+
+  .amenity-toggle.active {
+    border-color: #3ecf96;
+    background: #1a4a42;
+  }
+
+  .amenity-toggle input {
+    display: none;
+  }
+
+  .toggle-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #2a5a52;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-size: 11px;
+  }
+
+  .amenity-toggle.active .toggle-icon {
+    background: #3ecf96;
+    border-color: #3ecf96;
+    color: #0d2b28;
+  }
+
+  .amenity-name {
+    font-size: 14px;
+    color: #ffffff;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #3ecf96;
+    color: #0d2b28;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.2s, opacity 0.2s;
+    letter-spacing: -0.2px;
+  }
+
+  .submit-btn:hover { background: #34b882; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .result {
+    display: none;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #163d38;
+    border-radius: 12px;
+    border: 1px solid #2a5a52;
+    text-align: center;
+  }
+
+  .result.visible { display: block; }
+
+  .result-label {
+    font-size: 13px;
+    color: #7aada0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-number {
+    font-size: 52px;
+    font-weight: 600;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-number.over { color: #e05c3a; }
+  .result-number.fair { color: #3ecf96; }
+  .result-number.under { color: #3ecf96; }
+
+  .result-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #9abfb8;
+    margin-bottom: 1.5rem;
+  }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+
+  .breakdown-item {
+    background: #0d2b28;
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .breakdown-item .bl { font-size: 11px; color: #5a8a80; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .breakdown-item .bv { font-size: 16px; font-weight: 500; color: #ffffff; }
+
+  .cta-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #e05c3a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .cta-btn:hover { background: #c94e2f; }
+
+  .cta-sub {
+    font-size: 12px;
+    color: #5a8a80;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .error {
+    display: none;
+    background: #3d1a1a;
+    border: 1px solid #8b3a3a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: #e05c3a;
+    margin-top: 1rem;
+  }
+
+  .error.visible { display: block; }
+
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+    color: #7aada0;
+    font-size: 14px;
+  }
+
+  .loading.visible { display: block; }
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1">&lt;div class="widget-container"&gt;<span class="Apple-converted-space"> </span></p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; margin: 0; padding: 0; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #0d2b28;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>min-height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>h2 {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 22px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 500;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: -0.3px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.subtitle {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #7aada0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.5;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.field {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 1.25rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>label {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #9abfb8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 6px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 0.2px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>select, input {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #163d38;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid #2a5a52;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>appearance: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>outline: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: border-color 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>select:focus, input:focus {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-color: #3ecf96;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>input::placeholder {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #4a7a70;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenities-label {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #9abfb8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenities-grid {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: grid;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>grid-template-columns: 1fr 1fr;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gap: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 1.25rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenity-toggle {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gap: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #163d38;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid #2a5a52;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: border-color 0.2s, background 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>user-select: none;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenity-toggle.active {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-color: #3ecf96;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #1a4a42;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenity-toggle input {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.toggle-icon {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>height: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 2px solid #2a5a52;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>flex-shrink: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: all 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 11px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenity-toggle.active .toggle-icon {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #3ecf96;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-color: #3ecf96;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #0d2b28;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.amenity-name {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.submit-btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #3ecf96;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #0d2b28;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: background 0.2s, opacity 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: -0.2px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.submit-btn:hover { background: #34b882; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #163d38;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid #2a5a52;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result.visible { display: block; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-label {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #7aada0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: 0.5px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-number {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 52px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>letter-spacing: -2px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-number.over { color: #e05c3a; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-number.fair { color: #3ecf96; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-number.under { color: #3ecf96; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-desc {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.6;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #9abfb8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.result-breakdown {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: grid;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>grid-template-columns: 1fr 1fr;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gap: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: left;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.breakdown-item {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #0d2b28;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.breakdown-item .bl { font-size: 11px; color: #5a8a80; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.breakdown-item .bv { font-size: 16px; font-weight: 500; color: #ffffff; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.cta-btn {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: block;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #e05c3a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 15px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-decoration: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>transition: background 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.cta-btn:hover { background: #c94e2f; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.cta-sub {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #5a8a80;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.error {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #3d1a1a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid #8b3a3a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #e05c3a;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.error.visible { display: block; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.loading {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 1rem 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>color: #7aada0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.loading.visible { display: block; }</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;p class="subtitle"&gt;Tell us about your flat. We'll compare your service charge against our database of similar buildings and tell you where you stand.&lt;/p&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;Where is your property?&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;select id="location"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value=""&gt;Select location&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value="London"&gt;Inside London&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value="Outside London"&gt;Outside London&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/select&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;Size of your flat (square feet)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;input type="number" id="sqft" placeholder="e.g. 650" min="100" max="5000"/&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;Number of bedrooms&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;select id="bedrooms"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value=""&gt;Select bedrooms&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value="1"&gt;1 bedroom&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value="2"&gt;2 bedrooms&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;option value="3"&gt;3 bedrooms&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/select&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="field"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label&gt;Annual service charge (£)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;input type="number" id="charge" placeholder="e.g. 3500" min="0"/&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;span class="amenities-label"&gt;Does your building have any of the following?&lt;/span&gt;</p>
-<p class="p1">&lt;div class="amenities-grid"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label class="amenity-toggle" id="toggle-carpark"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="checkbox" id="carpark"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="toggle-icon"&gt;✓&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="amenity-name"&gt; Car park&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label class="amenity-toggle" id="toggle-concierge"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="checkbox" id="concierge"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="toggle-icon"&gt;✓&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="amenity-name"&gt; Concierge&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label class="amenity-toggle" id="toggle-gym"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="checkbox" id="gym"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="toggle-icon"&gt;✓&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="amenity-name"&gt; Gym&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;label class="amenity-toggle" id="toggle-cinema"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="checkbox" id="cinema"/&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="toggle-icon"&gt;✓&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="amenity-name"&gt; Cinema room&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/label&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;button class="submit-btn" id="submitBtn" onclick="calculate()"&gt;Calculate my service charge&lt;/button&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="loading" id="loading"&gt;Checking your service charge against our database…&lt;/div&gt;</p>
-<p class="p1">&lt;div class="error" id="error"&gt;Something went wrong. Please check your inputs and try again.&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="result" id="result"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="result-label"&gt;You are paying approximately&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="result-number" id="resultNumber"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="result-desc" id="resultDesc"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="result-breakdown"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="breakdown-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bl"&gt;Your cost per sq ft&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bv" id="userCost"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="breakdown-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bl"&gt;Benchmark for your building&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bv" id="benchmarkCost"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="breakdown-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bl"&gt;Benchmark range&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bv" id="benchmarkRange"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="breakdown-item"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bl"&gt;Your annual charge&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="bv" id="annualCharge"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;a class="cta-btn" href="https://overcharged.uk/audit"&gt;Get a free full audit →&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;p class="cta-sub"&gt;No obligation. We'll tell you exactly what we found and what you can do about it.&lt;/p&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Amenity toggle behaviour</p>
-<p class="p1"><span class="Apple-converted-space">  </span>['carpark','concierge','gym','cinema'].forEach(id =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const toggle = document.getElementById('toggle-' + id);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const checkbox = document.getElementById(id);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>toggle.addEventListener('click', function(e) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>checkbox.checked = !checkbox.checked;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>toggle.classList.toggle('active', checkbox.checked);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>async function calculate() {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Validate inputs</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const location = document.getElementById('location').value;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const sqft = parseFloat(document.getElementById('sqft').value);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const bedrooms = document.getElementById('bedrooms').value;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const charge = parseFloat(document.getElementById('charge').value);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!location || !sqft || !bedrooms || !charge) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showError('Please fill in all fields before calculating.');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (sqft &lt; 100 || sqft &gt; 5000) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showError('Please enter a realistic flat size between 100 and 5,000 sq ft.');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (charge &lt; 100 || charge &gt; 20000) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showError('Please enter a realistic annual service charge amount.');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Build payload</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const payload = {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>location: location,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>sq_ft: sqft,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>bedrooms: bedrooms,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>annual_charge: charge,</p>
-<p class="p1"><span class="Apple-converted-space">      </span>car_park: document.getElementById('carpark').checked ? 'Yes' : 'No',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>concierge: document.getElementById('concierge').checked ? 'Yes' : 'No',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>gym: document.getElementById('gym').checked ? 'Yes' : 'No',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cinema: document.getElementById('cinema').checked ? 'Yes' : 'No'</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// Show loading</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('loading').classList.add('visible');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('error').classList.remove('visible');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('result').classList.remove('visible');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('submitBtn').disabled = true;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const response = await fetch('<span class="Apple-tab-span">	</span>https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>method: 'POST',</p>
-<p class="p1"><span class="Apple-converted-space">        </span>headers: { 'Content-Type': 'application/json' },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body: JSON.stringify(payload)</p>
-<p class="p1"><span class="Apple-converted-space">      </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>const data = await response.json();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (data.status === 'success') {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>showResult(data, charge, sqft);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>showError('We could not find a benchmark for your building type. Please contact us directly for a manual assessment.');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>} catch (err) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>showError('Something went wrong connecting to our database. Please try again in a moment.');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} finally {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('loading').classList.remove('visible');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('submitBtn').disabled = false;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function showResult(data, charge, sqft) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const pct = parseFloat(data.overpayment_percent);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const userCost = parseFloat(data.user_cost_per_sqft);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const benchMid = parseFloat(data.benchmark_mid);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const benchLow = parseFloat(data.benchmark_low);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const benchHigh = parseFloat(data.benchmark_high);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const numberEl = document.getElementById('resultNumber');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const descEl = document.getElementById('resultDesc');</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (pct &gt; 5) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.textContent = '+' + Math.round(pct) + '% above benchmark';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.className = 'result-number over';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>descEl.textContent = 'Your service charge appears to be above what we would expect for a building like yours. This suggests there may be costs worth challenging. A full audit will tell you exactly where the excess lies.';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else if (pct &lt; -5) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.textContent = Math.round(pct) + '% below benchmark';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.className = 'result-number under';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>descEl.textContent = 'Your service charge appears to be within or below the expected range for a building like yours. That said, a charge being low does not mean it is free of unjustified costs - a full audit will give you complete certainty.';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.textContent = 'Within benchmark range';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>numberEl.className = 'result-number fair';</p>
-<p class="p1"><span class="Apple-converted-space">      </span>descEl.textContent = 'Your service charge appears to be broadly in line with what we would expect for a building like yours. A full audit will confirm whether all charges are properly evidenced and recoverable.';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + '/sq ft';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('benchmarkCost').textContent = '£' + benchMid.toFixed(2) + '/sq ft';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('benchmarkRange').textContent = '£' + benchLow.toFixed(2) + ' – £' + benchHigh.toFixed(2);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('annualCharge').textContent = '£' + charge.toLocaleString();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('result').classList.add('visible');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function showError(msg) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const el = document.getElementById('error');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>el.textContent = msg;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>el.classList.add('visible');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<p class="subtitle">Tell us about your flat. We'll compare your service charge against our database of similar buildings and tell you where you stand.</p>
+
+<div class="field">
+  <label>Where is your property?</label>
+  <select id="location">
+    <option value="">Select location</option>
+    <option value="London">Inside London</option>
+    <option value="Outside London">Outside London</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Size of your flat (square feet)</label>
+  <input type="number" id="sqft" placeholder="e.g. 650" min="100" max="5000"/>
+</div>
+
+<div class="field">
+  <label>Number of bedrooms</label>
+  <select id="bedrooms">
+    <option value="">Select bedrooms</option>
+    <option value="1">1 bedroom</option>
+    <option value="2">2 bedrooms</option>
+    <option value="3">3 bedrooms</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Annual service charge (£)</label>
+  <input type="number" id="charge" placeholder="e.g. 3500" min="0"/>
+</div>
+
+<span class="amenities-label">Does your building have any of the following?</span>
+<div class="amenities-grid">
+  <label class="amenity-toggle" id="toggle-carpark">
+    <input type="checkbox" id="carpark"/>
+    <span class="toggle-icon">✓</span>
+    <span class="amenity-name"> Car park</span>
+  </label>
+  <label class="amenity-toggle" id="toggle-concierge">
+    <input type="checkbox" id="concierge"/>
+    <span class="toggle-icon">✓</span>
+    <span class="amenity-name"> Concierge</span>
+  </label>
+  <label class="amenity-toggle" id="toggle-gym">
+    <input type="checkbox" id="gym"/>
+    <span class="toggle-icon">✓</span>
+    <span class="amenity-name"> Gym</span>
+  </label>
+  <label class="amenity-toggle" id="toggle-cinema">
+    <input type="checkbox" id="cinema"/>
+    <span class="toggle-icon">✓</span>
+    <span class="amenity-name"> Cinema room</span>
+  </label>
+</div>
+
+<button class="submit-btn" id="submitBtn" onclick="calculate()">Calculate my service charge</button>
+
+<div class="loading" id="loading">Checking your service charge against our database…</div>
+<div class="error" id="error">Something went wrong. Please check your inputs and try again.</div>
+
+<div class="result" id="result">
+  <div class="result-label">You are paying approximately</div>
+  <div class="result-number" id="resultNumber"></div>
+  <div class="result-desc" id="resultDesc"></div>
+
+  <div class="result-breakdown">
+    <div class="breakdown-item">
+      <div class="bl">Your cost per sq ft</div>
+      <div class="bv" id="userCost"></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="bl">Benchmark for your building</div>
+      <div class="bv" id="benchmarkCost"></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="bl">Benchmark range</div>
+      <div class="bv" id="benchmarkRange"></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="bl">Your annual charge</div>
+      <div class="bv" id="annualCharge"></div>
+    </div>
+  </div>
+
+  <a class="cta-btn" href="https://overcharged.uk/audit">Get a free full audit →</a>
+  <p class="cta-sub">No obligation. We'll tell you exactly what we found and what you can do about it.</p>
+</div>
+
+<script>
+  // Amenity toggle behaviour
+  ['carpark','concierge','gym','cinema'].forEach(id => {
+    const toggle = document.getElementById('toggle-' + id);
+    const checkbox = document.getElementById(id);
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      checkbox.checked = !checkbox.checked;
+      toggle.classList.toggle('active', checkbox.checked);
+    });
+  });
+
+  async function calculate() {
+    // Validate inputs
+    const location = document.getElementById('location').value;
+    const sqft = parseFloat(document.getElementById('sqft').value);
+    const bedrooms = document.getElementById('bedrooms').value;
+    const charge = parseFloat(document.getElementById('charge').value);
+
+    if (!location || !sqft || !bedrooms || !charge) {
+      showError('Please fill in all fields before calculating.');
+      return;
+    }
+
+    if (sqft < 100 || sqft > 5000) {
+      showError('Please enter a realistic flat size between 100 and 5,000 sq ft.');
+      return;
+    }
+
+    if (charge < 100 || charge > 20000) {
+      showError('Please enter a realistic annual service charge amount.');
+      return;
+    }
+
+    // Build payload
+    const payload = {
+      location: location,
+      sq_ft: sqft,
+      bedrooms: bedrooms,
+      annual_charge: charge,
+      car_park: document.getElementById('carpark').checked ? 'Yes' : 'No',
+      concierge: document.getElementById('concierge').checked ? 'Yes' : 'No',
+      gym: document.getElementById('gym').checked ? 'Yes' : 'No',
+      cinema: document.getElementById('cinema').checked ? 'Yes' : 'No'
+    };
+
+    // Show loading
+    document.getElementById('loading').classList.add('visible');
+    document.getElementById('error').classList.remove('visible');
+    document.getElementById('result').classList.remove('visible');
+    document.getElementById('submitBtn').disabled = true;
+
+    try {
+      const response = await fetch('	https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        showResult(data, charge, sqft);
+      } else {
+        showError('We could not find a benchmark for your building type. Please contact us directly for a manual assessment.');
+      }
+
+    } catch (err) {
+      showError('Something went wrong connecting to our database. Please try again in a moment.');
+    } finally {
+      document.getElementById('loading').classList.remove('visible');
+      document.getElementById('submitBtn').disabled = false;
+    }
+  }
+
+  function showResult(data, charge, sqft) {
+    const pct = parseFloat(data.overpayment_percent);
+    const userCost = parseFloat(data.user_cost_per_sqft);
+    const benchMid = parseFloat(data.benchmark_mid);
+    const benchLow = parseFloat(data.benchmark_low);
+    const benchHigh = parseFloat(data.benchmark_high);
+
+    const numberEl = document.getElementById('resultNumber');
+    const descEl = document.getElementById('resultDesc');
+
+    if (pct > 5) {
+      numberEl.textContent = '+' + Math.round(pct) + '% above benchmark';
+      numberEl.className = 'result-number over';
+      descEl.textContent = 'Your service charge appears to be above what we would expect for a building like yours. This suggests there may be costs worth challenging. A full audit will tell you exactly where the excess lies.';
+    } else if (pct < -5) {
+      numberEl.textContent = Math.round(pct) + '% below benchmark';
+      numberEl.className = 'result-number under';
+      descEl.textContent = 'Your service charge appears to be within or below the expected range for a building like yours. That said, a charge being low does not mean it is free of unjustified costs - a full audit will give you complete certainty.';
+    } else {
+      numberEl.textContent = 'Within benchmark range';
+      numberEl.className = 'result-number fair';
+      descEl.textContent = 'Your service charge appears to be broadly in line with what we would expect for a building like yours. A full audit will confirm whether all charges are properly evidenced and recoverable.';
+    }
+
+    document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + '/sq ft';
+    document.getElementById('benchmarkCost').textContent = '£' + benchMid.toFixed(2) + '/sq ft';
+    document.getElementById('benchmarkRange').textContent = '£' + benchLow.toFixed(2) + ' – £' + benchHigh.toFixed(2);
+    document.getElementById('annualCharge').textContent = '£' + charge.toLocaleString();
+
+    document.getElementById('result').classList.add('visible');
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+</script>
+
+</div>
+
 </body>
 </html>
