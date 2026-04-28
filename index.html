@@ -255,38 +255,6 @@
     color: #e05c3a;
   }
 
-  /* Email capture */
-  .email-capture {
-    margin-bottom: 1rem;
-  }
-
-  .email-capture label {
-    font-size: 13px;
-    color: #9abfb8;
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .email-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .email-row input {
-    flex: 1;
-    padding: 12px 14px;
-    background: #0d2b28;
-    border: 1px solid #2a5a52;
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 14px;
-    outline: none;
-  }
-
-  .email-row input:focus {
-    border-color: #3ecf96;
-  }
-
   .cta-btn {
     display: block;
     width: 100%;
@@ -469,24 +437,10 @@
         <div class="bv" id="benchmark"></div>
       </div>
       <div class="breakdown-item">
-        <div class="bl">Typical range</div>
-        <div class="bv" id="benchmarkRange"></div>
-      </div>
-      <div class="breakdown-item">
         <div class="bl">Your annual charge</div>
         <div class="bv" id="annualCharge"></div>
       </div>
     </div>
-
-    <div class="email-capture">
-      <label for="email">Get your full results by email</label>
-      <div class="email-row">
-        <input type="email" id="email" placeholder="your@email.com"/>
-      </div>
-    </div>
-
-    <button class="cta-btn" onclick="submitEmail()">Get a free full audit →</button>
-    <p class="cta-sub">No obligation. We'll tell you exactly what we found<br>and what you can do about it.</p>
 
     <span class="reset-link" onclick="resetForm()">← Start again</span>
   </div>
@@ -638,32 +592,6 @@
 
     document.getElementById('result').classList.add('visible');
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  async function submitEmail() {
-    const email = document.getElementById('email').value;
-
-    // If email is filled, log it to Make before redirecting
-    if (email && email.includes('@')) {
-      try {
-        await fetch('https://hook.eu1.make.com/p9mrqp1bcbg4t0g76fhzxq8qb9mp8tdi', {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'lead_capture',
-            email: email,
-            ...resultData
-          })
-        });
-      } catch (err) {
-        // Fail silently — still redirect even if logging fails
-        console.error('Lead capture error:', err);
-      }
-    }
-
-    // Redirect to home page
-    window.location.href = 'https://overcharged.uk';
   }
 
   function resetForm() {
