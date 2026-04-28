@@ -436,10 +436,6 @@
         <div class="bl">Benchmark for your building</div>
         <div class="bv" id="benchmark"></div>
       </div>
-      <div class="breakdown-item">
-        <div class="bl">Your annual charge</div>
-        <div class="bv" id="annualCharge"></div>
-      </div>
     </div>
 
     <span class="reset-link" onclick="resetForm()">← Start again</span>
@@ -588,7 +584,6 @@
 
     document.getElementById('userCost').textContent = '£' + userCost.toFixed(2) + ' / sq ft';
     document.getElementById('benchmark').textContent = '£' + bench.toFixed(2);
-    document.getElementById('annualCharge').textContent = '£' + charge.toLocaleString();
 
     document.getElementById('result').classList.add('visible');
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
