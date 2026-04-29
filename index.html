@@ -480,7 +480,7 @@
     if (!sqft || isNaN(sqft)) { showError('Please enter the size of your flat in square feet.'); return; }
     if (sqft < 100 || sqft > 5000) { showError('Please enter a realistic flat size between 100 and 5,000 sq ft.'); return; }
     if (!charge || isNaN(charge)) { showError('Please enter your annual service charge amount.'); return; }
-    if (charge < 100 || charge > 500000) { showError('Please enter a realistic annual service charge amount.'); return; }
+    if (charge < 200 || charge > 50000) { showError('Please enter a realistic annual service charge amount.'); return; }
 
     // Build payload
     const payload = {
